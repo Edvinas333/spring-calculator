@@ -1,14 +1,14 @@
 package com.calculator.springCalculator;
 
+import jakarta.validation.Valid;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 
@@ -87,40 +87,59 @@ public class SpringCalculatorController {
 
     //kadangi skaiciuotuvo forma naudoja post metoda cia irgi nurodysime POST
     @RequestMapping(method = RequestMethod.POST, value = "/calc")
-    public String calc(@RequestParam HashMap<String, String> ivedimoSarasas, ModelMap isvedimoSarasas) {
-        int sk1 = Integer.parseInt(ivedimoSarasas.get("sk1"));
-        int sk2 = Integer.parseInt(ivedimoSarasas.get("sk2"));
+    public String calc(
+            //svarbu parametras BindingResult turi eiti iskar po anotacijos @Valid
+            //kitu atveju gausime klaida "Validation failed for object"
+            @Valid @ModelAttribute("number") Number numb, BindingResult bindingResult,
+            @RequestParam HashMap<String, String> ivedimoSarasas, ModelMap isvedimoSarasas) {
 
-        double rezultatas = 0;
-        String zenklas = ivedimoSarasas.get("zenklas");
+        //jeigu validacijos klaidos (zr. Number klaseje aprasyta validacija prie kiekvieno skaiciaus)
+        if(bindingResult.hasErrors()){
+            //vartotojas lieka skaiciuotuvo puslapyje tol kol neistaiso validacijos klaid
+            return "skaiciuotuvas";
+        //vartotojas praejo validacija - skaiciuojamas rezultatas
+        }else{
 
-        if (zenklas.equals("+")) {
-            rezultatas = sk1 + sk2;
+            int sk1 = Integer.parseInt(ivedimoSarasas.get("sk1"));
+            int sk2 = Integer.parseInt(ivedimoSarasas.get("sk2"));
 
-        } else if (zenklas.equals("-")) {
-            rezultatas = sk1 - sk2;
+            double rezultatas = 0;
+            String zenklas = ivedimoSarasas.get("zenklas");
 
-        }else if (zenklas.equals("*")){
-            rezultatas = sk1 * sk2;
+            if (zenklas.equals("+")) {
+                rezultatas = sk1 + sk2;
 
-        }else if (zenklas.equals("/") && sk2 != 0){
-            rezultatas = sk1 / sk2;
+            } else if (zenklas.equals("-")) {
+                rezultatas = sk1 - sk2;
+
+            }else if (zenklas.equals("*")){
+                rezultatas = sk1 * sk2;
+
+            }else if (zenklas.equals("/") && sk2 != 0){
+                rezultatas = sk1 / sk2;
+            }
+
+            //ivedimo sarasas naudojamas siusti duomenis is Sprin MVC kontrolerio i JSP faila (vaizda)
+            isvedimoSarasas.put("sk1",sk1);
+            isvedimoSarasas.put("sk2",sk2);
+            isvedimoSarasas.put("zenklas",zenklas);
+            isvedimoSarasas.put("rezultatas",rezultatas);
+
+            return "skaiciuoti";
         }
 
-        //ivedimo sarasas naudojamas siusti duomenis is Sprin MVC kontrolerio i JSP faila (vaizda)
-        isvedimoSarasas.put("sk1",sk1);
-        isvedimoSarasas.put("sk2",sk2);
-        isvedimoSarasas.put("zenklas",zenklas);
-        isvedimoSarasas.put("rezultatas",rezultatas);
+
 
         //grazinama vaizdas (forma)
         //svarbu nurodyti per application.properties prefix ir suffix
         //nes pagal tai ieskos vaizdo projekte
-        return "skaiciuoti";
+        // return "skaiciuoti";
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/")
-public String viewHome() {
+public String viewHome(Model model) {
+        //Jeigu Model 'number' nepraeina validacijos - per ji grazinamos validacijos klaidos i View
+        model.addAttribute("number", new Number());
         //graziname JSP faila kuris turi buti talpinamas "webapp -> WEB-INF -> JSP" aplanke
 
 
