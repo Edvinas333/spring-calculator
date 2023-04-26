@@ -1,5 +1,6 @@
-package com.calculator.springCalculator;
+package com.calculator.springCalculator.config;
 
+import com.calculator.springCalculator.SpringCalculatorApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 //servlet yra java programa veikianti webserveryje

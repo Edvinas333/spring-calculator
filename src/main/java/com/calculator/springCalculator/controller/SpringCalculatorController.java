@@ -1,9 +1,8 @@
-package com.calculator.springCalculator;
+package com.calculator.springCalculator.controller;
 
+import com.calculator.springCalculator.model.Number;
 import jakarta.validation.Valid;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;

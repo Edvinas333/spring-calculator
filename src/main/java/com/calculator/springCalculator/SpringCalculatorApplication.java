@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 //si anotacija yra lygi @Configuration, @EnableAutoConfiguration, @ComponentScan
 //si anotacija nurodoma klaseje turincioje pagrindini main metoda
-
+//Pagrindines klases negalima kelti i katalogus
 @SpringBootApplication
 public class SpringCalculatorApplication {
 
