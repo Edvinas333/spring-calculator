@@ -81,6 +81,14 @@
             <version>2.3.2</version>
         </dependency>
 
+        <!-- JSP jstl - java server pages tag library anotacijoms (pvz.: foreach, URL, param) -->
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>jstl</artifactId>
+            <version>1.2</version>
+        </dependency>
+
+
     </dependencies>
 
     <build>

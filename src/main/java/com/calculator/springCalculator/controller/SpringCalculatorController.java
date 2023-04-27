@@ -3,6 +3,7 @@ package com.calculator.springCalculator.controller;
 import com.calculator.springCalculator.model.Number;
 import com.calculator.springCalculator.service.NumberService;
 import jakarta.validation.Valid;
+import org.dom4j.rule.Mode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -105,11 +106,11 @@ public class SpringCalculatorController {
             @RequestParam HashMap<String, String> ivedimoSarasas, ModelMap isvedimoSarasas) {
 
         //jeigu validacijos klaidos (zr. Number klaseje aprasyta validacija prie kiekvieno skaiciaus)
-        if(bindingResult.hasErrors()){
+        if (bindingResult.hasErrors()) {
             //vartotojas lieka skaiciuotuvo puslapyje tol kol neistaiso validacijos klaid
             return "skaiciuotuvas";
-        //vartotojas praejo validacija - skaiciuojamas rezultatas
-        }else{
+            //vartotojas praejo validacija - skaiciuojamas rezultatas
+        } else {
 
             int sk1 = Integer.parseInt(ivedimoSarasas.get("sk1"));
             int sk2 = Integer.parseInt(ivedimoSarasas.get("sk2"));
@@ -123,10 +124,10 @@ public class SpringCalculatorController {
             } else if (zenklas.equals("-")) {
                 rezultatas = sk1 - sk2;
 
-            }else if (zenklas.equals("*")){
+            } else if (zenklas.equals("*")) {
                 rezultatas = sk1 * sk2;
 
-            }else if (zenklas.equals("/") && sk2 != 0){
+            } else if (zenklas.equals("/") && sk2 != 0) {
                 rezultatas = (double) sk1 / sk2;
             } else {
                 return "error";
@@ -134,17 +135,16 @@ public class SpringCalculatorController {
 
 
             //ivedimo sarasas naudojamas siusti duomenis is Sprin MVC kontrolerio i JSP faila (vaizda)
-            isvedimoSarasas.put("sk1",sk1);
-            isvedimoSarasas.put("sk2",sk2);
-            isvedimoSarasas.put("zenklas",zenklas);
-            isvedimoSarasas.put("rezultatas",rezultatas);
+            isvedimoSarasas.put("sk1", sk1);
+            isvedimoSarasas.put("sk2", sk2);
+            isvedimoSarasas.put("zenklas", zenklas);
+            isvedimoSarasas.put("rezultatas", rezultatas);
 
             //kreipiames i Service kuris savo ruostu kreipiasi i DAO ir issaugoja irasa DB
-            numberService.insert(new Number(sk1, sk2,zenklas,rezultatas));
+            numberService.insert(new Number(sk1, sk2, zenklas, rezultatas));
 
             return "skaiciuoti";
         }
-
 
 
         //grazinama vaizdas (forma)
@@ -154,14 +154,51 @@ public class SpringCalculatorController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/")
-public String viewHome(Model model) {
+    public String viewHome(Model model) {
         //Jeigu Model 'number' nepraeina validacijos - per ji grazinamos validacijos klaidos i View
         model.addAttribute("number", new Number());
         //graziname JSP faila kuris turi buti talpinamas "webapp -> WEB-INF -> JSP" aplanke
 
 
-    return "skaiciuotuvas";
+        return "skaiciuotuvas";
 
+    }
+
+    //grazinam visa sarasa
+    @GetMapping("/numbers")
+    public String getAllNumbers(Model model) {
+        model.addAttribute("numbers", numberService.getAll());
+        return "numbers";
+    }
+
+    //id - ateina is front end vartotojui pasirinkus konkretu irasa
+    @GetMapping("/show{id}")
+    public String getById(@RequestParam("id") int id, Model model) {
+        model.addAttribute("number", numberService.getById(id));
+        return "number";
+    }
+
+    //pirmaiusia istrinam poto grazinam vel visa sarasa is naujo
+    @GetMapping("/delete{id}")
+    public String deleteById(@RequestParam("id") int id, Model model) {
+        numberService.delete(id);
+        model.addAttribute("numbers", numberService.getAll());
+        return "numbers";
+    }
+
+    //atnaujinant irasa pirmiausia reikia ji parodyti
+    @GetMapping("/update{id}")
+    public String updateById(@RequestParam("id") int id, Model model) {
+        model.addAttribute("number", numberService.getById(id));
+        return "update";
+    }
+
+    //kadangi forma naudoja metoda POST cia irgi nurodome POST
+    @PostMapping("/updateNumber")
+    public String updateNumber(@ModelAttribute("number") Number number) {
+        numberService.update(number);
+        //redirect nukreipia vartotoja i iraso atvaizdavimo puslapi (getById)
+        return "redirect:/show?id=" + number.getId();
     }
 
 

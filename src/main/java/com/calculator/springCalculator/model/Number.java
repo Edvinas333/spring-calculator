@@ -53,6 +53,11 @@ public class Number {
         return id;
     }
 
+    //butinas setId kad model vaiksciotu tarp front end ir back end
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public int getSk1() {
         return sk1;
     }
@@ -95,4 +100,6 @@ public class Number {
                 ", rezultatas=" + rezultatas +
                 '}';
     }
+
+
 }
