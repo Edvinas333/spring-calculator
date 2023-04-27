@@ -128,7 +128,10 @@ public class SpringCalculatorController {
 
             }else if (zenklas.equals("/") && sk2 != 0){
                 rezultatas = (double) sk1 / sk2;
+            } else {
+                return "error";
             }
+
 
             //ivedimo sarasas naudojamas siusti duomenis is Sprin MVC kontrolerio i JSP faila (vaizda)
             isvedimoSarasas.put("sk1",sk1);
