@@ -1,7 +1,10 @@
 package com.calculator.springCalculator.controller;
 
 import com.calculator.springCalculator.model.Number;
+import com.calculator.springCalculator.service.NumberService;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -31,7 +34,16 @@ import java.util.HashMap;
 @EnableAutoConfiguration
 
 public class SpringCalculatorController {
-//    @RequestMapping(method = RequestMethod.GET, value = "/")
+
+    //kaip perduodami duomenys skirtingiems komponentams:
+    //Vartotojas -> CalculatorController -> NumberServiceImpl -> NumberDAOImpl
+
+    @Autowired
+    @Qualifier("NumberService")
+    public NumberService numberService;
+
+
+    //    @RequestMapping(method = RequestMethod.GET, value = "/")
 //    public String hello() {
 //        //ApplicationContext yra interfeisas skirtas suteikti informacija apie aplikacijos konfiguracija
 //        //Siuo atveju naudojama konfiguracija paiimama is xml failo
@@ -115,7 +127,7 @@ public class SpringCalculatorController {
                 rezultatas = sk1 * sk2;
 
             }else if (zenklas.equals("/") && sk2 != 0){
-                rezultatas = sk1 / sk2;
+                rezultatas = (double) sk1 / sk2;
             }
 
             //ivedimo sarasas naudojamas siusti duomenis is Sprin MVC kontrolerio i JSP faila (vaizda)
@@ -123,6 +135,9 @@ public class SpringCalculatorController {
             isvedimoSarasas.put("sk2",sk2);
             isvedimoSarasas.put("zenklas",zenklas);
             isvedimoSarasas.put("rezultatas",rezultatas);
+
+            //kreipiames i Service kuris savo ruostu kreipiasi i DAO ir issaugoja irasa DB
+            numberService.insert(new Number(sk1, sk2,zenklas,rezultatas));
 
             return "skaiciuoti";
         }

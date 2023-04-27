@@ -28,9 +28,17 @@ public class Number {
     @Column(name = "rezultatas")
     private double rezultatas;
 
-
+    //konstruktorius skirtas esamu duomenu baze irasu paieskai, redagavimui, trynimui
     public Number(int id, int sk1, int sk2, String zenklas, double rezultatas) {
         this.id = id;
+        this.sk1 = sk1;
+        this.sk2 = sk2;
+        this.zenklas = zenklas;
+        this.rezultatas = rezultatas;
+    }
+
+    //konstruktorius skirtas nauju irasu kurimui
+    public Number(int sk1, int sk2, String zenklas, double rezultatas) {
         this.sk1 = sk1;
         this.sk2 = sk2;
         this.zenklas = zenklas;
