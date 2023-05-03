@@ -189,6 +189,7 @@ public class SpringCalculatorController {
     //atnaujinant irasa pirmiausia reikia ji parodyti
     @GetMapping("/update{id}")
     public String updateById(@RequestParam("id") int id, Model model) {
+       //kai uzkrauname iraso redagavimo forma privalome jos laukelius uzpildyti iraso informacija
         model.addAttribute("number", numberService.getById(id));
         return "update";
     }
